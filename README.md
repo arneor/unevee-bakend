@@ -2,6 +2,9 @@
 
 NestJS backend that powers a public-facing fitness experience for programs, workouts, and diets. The service is designed for MongoDB using Mongoose schemas that mirror existing data collections, and ships with modular endpoints and DTO-driven validation ready for future expansion (auth, rate limiting, caching).
 
+- **Production base URL**: `https://unevee-bakend.onrender.com`
+- **Local base URL**: `http://localhost:3000`
+
 ---
 
 ## Stack & Key Packages
@@ -9,8 +12,7 @@ NestJS backend that powers a public-facing fitness experience for programs, work
 - Node.js / NestJS 11
 - MongoDB via `@nestjs/mongoose` and `mongoose`
 - DTO validation with `class-validator`, `class-transformer`, and global `ValidationPipe`
-- UUID-based identifie
-  rs for new diet plans (`crypto.randomUUID`)
+- UUID-based identifiers for new diet plans (`crypto.randomUUID`)
 
 ---
 
@@ -36,12 +38,9 @@ Each feature module follows NestJS best practices (module → controller → ser
    ```
 
 2. **Configure environment**
-   - Copy `.env.example` (or create `.env` manually) and set:
-     ```
-     MONGODB_URI=mongodb://localhost:27017/amata2_dev
-     PORT=3000
-     ```
-   - `MONGODB_URI` points to the MongoDB replica containing `programs`, `workouts`, and the new `diets` collection.
+   - copy `.env.example` (or create `.env`) and configure `MONGODB_URI` plus other secrets.
+   - the app reads `MONGODB_URI` via `@nestjs/config`; default fallback is `mongodb://localhost:27017/amata2_dev`.
+   - set `PORT` if you need a non-default listener.
 
 3. **Run the app**
    ```bash
@@ -67,6 +66,8 @@ All schemas enable timestamps (`createdAt`, `updatedAt`) and default number fiel
 
 Use Postman, Thunder Client, or `curl` examples below. All endpoints return JSON and use query parameters for pagination (`page`, `limit`, optional `orgId` for diets).
 
+- Replace the domain in samples with `https://unevee-bakend.onrender.com` when exercising the hosted environment.
+
 ### Programs
 
 #### List programs
@@ -89,15 +90,17 @@ Use Postman, Thunder Client, or `curl` examples below. All endpoints return JSON
   }
   ```
 
-#### Get program by id
+#### Get program by identifier
 
-- **Method / Path**: `GET /programs/:id`
-- **Path param**: Mongo `_id`
-- **Test with curl**
+- **Method / Path**: `GET /programs/:identifier`
+- **Identifier options**: Mongo `_id`, `program_id`, or `slug`.
+- **Examples**
   ```bash
   curl -X GET "http://localhost:3000/programs/68f4e56c23c128edae452892"
+  curl -X GET "http://localhost:3000/programs/01K7Y4B8643G43R5F0SKX19V65"
+  curl -X GET "http://localhost:3000/programs/new-example-program"
   ```
-- **Errors**: `400` for invalid ObjectId, `404` if not found.
+- **Errors**: `404` if not found.
 
 ### Workouts
 
@@ -110,12 +113,15 @@ Use Postman, Thunder Client, or `curl` examples below. All endpoints return JSON
   curl -X GET "http://localhost:3000/workouts?page=1&limit=10"
   ```
 
-#### Get workout by id
+#### Get workout by identifier
 
-- **Method / Path**: `GET /workouts/:id`
-- **Test with curl**
+- **Method / Path**: `GET /workouts/:identifier`
+- **Identifier options**: Mongo `_id`, `uid`, or `slug`.
+- **Examples**
   ```bash
   curl -X GET "http://localhost:3000/workouts/68f4e53d23c128edae452891"
+  curl -X GET "http://localhost:3000/workouts/01K7XVSSJ73RQA88CBVG31M5NZ"
+  curl -X GET "http://localhost:3000/workouts/45-degree-bicycle-twisting-crunch"
   ```
 
 #### Increment workout stats
@@ -190,12 +196,16 @@ Use Postman, Thunder Client, or `curl` examples below. All endpoints return JSON
   curl -X GET "http://localhost:3000/organization/org_123/diets?page=1&limit=5"
   ```
 
-#### Get diet by id
+#### Get diet by identifier
 
-- **Method / Path**: `GET /diets/:id`
-- **Test with curl**
+- **Method / Path**: `GET /diets/:identifier`
+- **Identifier options**: Mongo `_id`, `diet_id`, or `slug`.
+- **Optional query param**: `orgId` to constrain by organization.
+- **Examples**
   ```bash
-  curl -X GET "http://localhost:3000/diets/68f4e56c23c128edae452999"
+  curl -X GET "http://localhost:3000/diets/68f4e56c23c128edae452999?orgId=org_123"
+  curl -X GET "http://localhost:3000/diets/4a0b9c76-3f0f-4f27-bf18-7a6b4ad04f47"
+  curl -X GET "http://localhost:3000/diets/7-day-keto-diet-20250101T120000123"
   ```
 
 #### Update diet (full or partial)

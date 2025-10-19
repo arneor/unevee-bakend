@@ -4,9 +4,10 @@ This guide documents the public REST endpoints exposed by the NestJS backend. Sh
 
 ---
 
-## Base URL & Versioning
+## Base URLs & Versioning
 
-- **Base URL (local)**: `http://localhost:3000`
+- **Production**: `https://unevee-bakend.onrender.com`
+- **Local**: `http://localhost:3000`
 - All APIs are currently **public** – no auth headers required.
 - Versioning is planned; for now the routes sit under the root (`/programs`, `/workouts`, `/diets`).
 
@@ -28,9 +29,9 @@ This guide documents the public REST endpoints exposed by the NestJS backend. Sh
   ```
 
 - **Identifiers**  
-  - `_id`: MongoDB object id.  
-  - `program_id`, `diet_id`: external string IDs.  
-  - For detail routes, you may pass either `_id` or alternate ids where noted.
+  - `_id`: MongoDB ObjectId.  
+  - `program_id`, `diet_id`: external string IDs generated elsewhere (programs) or by the service (diets).  
+  - Detail routes accept `_id` **or** the feature-specific id/slug (see endpoint notes).
 
 ---
 
@@ -341,11 +342,13 @@ This guide documents the public REST endpoints exposed by the NestJS backend. Sh
   GET /organization/org_123/diets?page=1&limit=6
   ```
 
-### GET `/diets/:id`
-- Fetch a single diet by `_id`.
-- Optional query param `orgId` to ensure the diet belongs to the expected org.
+### GET `/diets/:identifier`
+- Accepts Mongo `_id`, `diet_id`, or `slug`.
+- Optional query param `orgId` to pin to an organisation.
   ```
   GET /diets/68f5aa5e23c128edae452920?orgId=org_123
+  GET /diets/4a0b9c76-3f0f-4f27-bf18-7a6b4ad04f47
+  GET /diets/7-day-keto-diet-20250101T120000123
   ```
 - Returns full diet document; `404` if missing.
 
@@ -390,8 +393,9 @@ Error shape example:
 
 1. **Always log pagination metadata** – you’ll need it for infinite scroll or next-page buttons.
 2. **Treat stats as read-only** except via the dedicated stats endpoints (e.g., `PATCH /workouts/:id/stats`).
-3. **Slug support** – detail endpoints for programs and workouts accept both `_id` and slug/external id; use whichever your routing prefers.
-4. **Diet editing flows** – prefer `PATCH` for simple status toggles, `PUT` only when replacing the full payload.
-5. **Optimistic UI** – if you optimistically increment stats on the client, still call the backend so the database stays accurate.
+3. **Slug support** – detail endpoints for programs, workouts, and diets accept both `_id` and slug/external ids; use whichever your routing prefers.
+4. **Diet slugs** – service auto-appends a timestamp suffix when generating slugs to keep them unique; store the slug from the response rather than re-computing it on the client.
+5. **Diet editing flows** – prefer `PATCH` for simple status toggles, `PUT` only when replacing the full payload.
+6. **Optimistic UI** – if you optimistically increment stats on the client, still call the backend so the database stays accurate.
 
 Need another endpoint or field documented? Ping the backend team; we’ll update this doc as features grow.
