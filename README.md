@@ -5,14 +5,17 @@ NestJS backend that powers a public-facing fitness experience for programs, work
 ---
 
 ## Stack & Key Packages
+
 - Node.js / NestJS 11
 - MongoDB via `@nestjs/mongoose` and `mongoose`
 - DTO validation with `class-validator`, `class-transformer`, and global `ValidationPipe`
-- UUID-based identifiers for new diet plans (`crypto.randomUUID`)
+- UUID-based identifie
+  rs for new diet plans (`crypto.randomUUID`)
 
 ---
 
 ## Project Structure (src)
+
 - `app.module.ts` – Bootstraps Mongo connection, registers feature modules.
 - `main.ts` – Enables global validation pipe (transform & whitelist).
 - `common/dto/pagination-query.dto.ts` – Shared pagination query DTO.
@@ -27,6 +30,7 @@ Each feature module follows NestJS best practices (module → controller → ser
 ## Getting Started
 
 1. **Install dependencies**
+
    ```bash
    npm install
    ```
@@ -49,11 +53,11 @@ Each feature module follows NestJS best practices (module → controller → ser
 
 ## MongoDB Schemas (High-Level)
 
-| Collection | Highlights |
-|------------|------------|
+| Collection | Highlights                                                                                                                                  |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
 | `programs` | Nested `days[] -> workouts[] -> exercises[]`, stats block, audit metadata, taxonomy structure. Read-only endpoints mirror existing objects. |
-| `workouts` | Rich taxonomy, media variants, instructions, and stats object. Stats updates performed with atomic `$inc`. |
-| `diets`    | Org-scoped diet plans with macros, meals per day, assignment list, default stats, audit info, and indexes on `org_id`, `diet_id`, `slug`. |
+| `workouts` | Rich taxonomy, media variants, instructions, and stats object. Stats updates performed with atomic `$inc`.                                  |
+| `diets`    | Org-scoped diet plans with macros, meals per day, assignment list, default stats, audit info, and indexes on `org_id`, `diet_id`, `slug`.   |
 
 All schemas enable timestamps (`createdAt`, `updatedAt`) and default number fields to `0` for consistency with existing data.
 
@@ -66,6 +70,7 @@ Use Postman, Thunder Client, or `curl` examples below. All endpoints return JSON
 ### Programs
 
 #### List programs
+
 - **Method / Path**: `GET /programs`
 - **Query params**:
   - `page` (optional, default `1`)
@@ -85,6 +90,7 @@ Use Postman, Thunder Client, or `curl` examples below. All endpoints return JSON
   ```
 
 #### Get program by id
+
 - **Method / Path**: `GET /programs/:id`
 - **Path param**: Mongo `_id`
 - **Test with curl**
@@ -96,6 +102,7 @@ Use Postman, Thunder Client, or `curl` examples below. All endpoints return JSON
 ### Workouts
 
 #### List workouts
+
 - **Method / Path**: `GET /workouts`
 - **Query params**: `page`, `limit` (same as programs)
 - **Test with curl**
@@ -104,6 +111,7 @@ Use Postman, Thunder Client, or `curl` examples below. All endpoints return JSON
   ```
 
 #### Get workout by id
+
 - **Method / Path**: `GET /workouts/:id`
 - **Test with curl**
   ```bash
@@ -111,6 +119,7 @@ Use Postman, Thunder Client, or `curl` examples below. All endpoints return JSON
   ```
 
 #### Increment workout stats
+
 - **Method / Path**: `PATCH /workouts/:id/stats`
 - **Body**: Provide positive increments for any stat (`views`, `completions`, `favorites`, `avg_rating`).
 - **Test with curl**
@@ -124,6 +133,7 @@ Use Postman, Thunder Client, or `curl` examples below. All endpoints return JSON
 ### Diets
 
 #### Create a diet
+
 - **Method / Path**: `POST /diets`
 - **Body**: Must include `org_id`, `title`; slug auto-generated when omitted; `diet_id` generated server-side.
 - **Sample payload**
@@ -161,6 +171,7 @@ Use Postman, Thunder Client, or `curl` examples below. All endpoints return JSON
   ```
 
 #### List diets (global)
+
 - **Method / Path**: `GET /diets`
 - **Query params**:
   - `page`, `limit`
@@ -171,6 +182,7 @@ Use Postman, Thunder Client, or `curl` examples below. All endpoints return JSON
   ```
 
 #### List diets by organization path
+
 - **Method / Path**: `GET /organization/:orgId/diets`
 - **Query params**: `page`, `limit`
 - **Test with curl**
@@ -179,14 +191,15 @@ Use Postman, Thunder Client, or `curl` examples below. All endpoints return JSON
   ```
 
 #### Get diet by id
+
 - **Method / Path**: `GET /diets/:id`
-- **Query params**: `orgId` (optional safety filter)
 - **Test with curl**
   ```bash
-  curl -X GET "http://localhost:3000/diets/68f4e56c23c128edae452999?orgId=org_123"
+  curl -X GET "http://localhost:3000/diets/68f4e56c23c128edae452999"
   ```
 
 #### Update diet (full or partial)
+
 - **Method / Path**:
   - `PUT /diets/:id` (replace)
   - `PATCH /diets/:id` (partial)
@@ -201,6 +214,7 @@ Use Postman, Thunder Client, or `curl` examples below. All endpoints return JSON
 ---
 
 ## Validation & Error Handling
+
 - Global `ValidationPipe` enforces DTO rules (type coercion, whitelisting, disallowing unknown payload properties).
 - Invalid ObjectId parameters return `400 Bad Request`.
 - Missing resources return `404 Not Found`.
@@ -209,6 +223,7 @@ Use Postman, Thunder Client, or `curl` examples below. All endpoints return JSON
 ---
 
 ## Recommended Testing Flow
+
 1. **Seed / verify MongoDB data**: ensure `programs` and `workouts` collections contain the provided sample data; create diets through API.
 2. **Run backend**: `npm run start:dev`.
 3. **Exercise endpoints**:
@@ -221,6 +236,7 @@ Use Postman, Thunder Client, or `curl` examples below. All endpoints return JSON
 ---
 
 ## Future Enhancements (Non-breaking)
+
 - Introduce authentication & authorization guards (e.g., JWT) as APIs transition from public to protected.
 - Add caching (Redis) around heavy list endpoints.
 - Extend diets with soft-delete support and historical tracking.
@@ -229,6 +245,7 @@ Use Postman, Thunder Client, or `curl` examples below. All endpoints return JSON
 ---
 
 ## Scripts
+
 ```bash
 npm run start         # start once
 npm run start:dev     # watch mode

@@ -36,9 +36,9 @@ export class DietsController {
     return this.dietsService.findAll({ ...query, orgId });
   }
 
-  @Get('diets/:orgId')
-  findOne(@Param('orgId') orgId: string) {
-    return this.dietsService.findOne(orgId);
+  @Get('diets/:dietId')
+  findOne(@Param('dietId') dietId: string) {
+    return this.dietsService.findOne(dietId);
   }
 
   @Put('diets/:id')

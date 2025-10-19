@@ -62,8 +62,8 @@ export class DietsService {
     return { data, total, page, limit };
   }
 
-  async findOne(orgId: string): Promise<Diet> {
-    const filter: FilterQuery<DietDocument> = { org_id: orgId };
+  async findOne(dietId: string): Promise<Diet> {
+    const filter: FilterQuery<DietDocument> = { diet_id: dietId };
 
     const diet = await this.dietModel.findOne(filter).lean().exec();
     if (!diet) {
@@ -129,13 +129,19 @@ export class DietsService {
     return value;
   }
 
-  private buildSlug(input: string) {
-    return input
+  private buildSlug(input: string): string {
+    const base = input
       ?.toLowerCase()
       .trim()
       .replace(/[^a-z0-9\s-]/g, '')
       .replace(/\s+/g, '-')
       .replace(/-+/g, '-');
+
+    // Generate timestamp with milliseconds
+    const timestamp = new Date().toISOString().replace(/[-:.TZ]/g, ''); // e.g., 20251019T230451.123 → 20251019T230451123
+
+    // Combine base + timestamp
+    return `${base}-${timestamp}`;
   }
 
   private handleMongoError(error: unknown): never {
