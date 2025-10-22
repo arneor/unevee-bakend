@@ -2,24 +2,20 @@ import { Transform } from 'class-transformer';
 import { IsNumber, IsOptional, IsString, Min } from 'class-validator';
 import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
 
-export class ListDietsDto extends PaginationQueryDto {
+export class ListWorkoutsDto extends PaginationQueryDto {
   @IsOptional()
   @IsString()
-  orgId?: string;
-
-  @IsOptional()
-  @IsString()
-  difficulty_level?: string;
+  difficulty?: string;
 
   @IsOptional()
   @Transform(({ value }) => (value !== undefined ? Number(value) : undefined))
   @IsNumber()
   @Min(0)
-  min_calories?: number;
+  min_duration?: number;
 
   @IsOptional()
   @Transform(({ value }) => (value !== undefined ? Number(value) : undefined))
   @IsNumber()
   @Min(0)
-  max_calories?: number;
+  max_duration?: number;
 }

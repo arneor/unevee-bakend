@@ -4,10 +4,11 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, isValidObjectId } from 'mongoose';
+import { FilterQuery, Model, isValidObjectId } from 'mongoose';
 import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
 import { UpdateWorkoutStatsDto } from './dto/update-workout-stats.dto';
 import { Workout, WorkoutDocument } from './schemas/workout.schema';
+import { ListWorkoutsDto } from './dto/list-workouts.dto';
 
 @Injectable()
 export class WorkoutsService {
@@ -17,21 +18,39 @@ export class WorkoutsService {
   ) {}
 
   async findAll(
-    pagination: PaginationQueryDto,
+    listDto: ListWorkoutsDto,
   ): Promise<{ data: Workout[]; total: number; page: number; limit: number }> {
-    const page = pagination.page ?? 1;
-    const limit = Math.min(pagination.limit ?? 10, 100);
+    const page = listDto.page ?? 1;
+    const limit = Math.min(listDto.limit ?? 10, 100);
     const skip = (page - 1) * limit;
+
+    const filter: FilterQuery<WorkoutDocument> = {};
+
+    // Add difficulty filter
+    if (listDto.difficulty) {
+      filter.difficulty = listDto.difficulty;
+    }
+
+    // Add duration filters
+    if (listDto.min_duration !== undefined || listDto.max_duration !== undefined) {
+      filter.duration_minutes = {};
+      if (listDto.min_duration !== undefined) {
+        filter.duration_minutes.$gte = listDto.min_duration;
+      }
+      if (listDto.max_duration !== undefined) {
+        filter.duration_minutes.$lte = listDto.max_duration;
+      }
+    }
 
     const [data, total] = await Promise.all([
       this.workoutModel
-        .find()
+        .find(filter)
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)
         .lean()
         .exec(),
-      this.workoutModel.countDocuments().exec(),
+      this.workoutModel.countDocuments(filter).exec(),
     ]);
 
     return { data, total, page, limit };

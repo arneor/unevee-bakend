@@ -76,9 +76,13 @@ Use Postman, Thunder Client, or `curl` examples below. All endpoints return JSON
 - **Query params**:
   - `page` (optional, default `1`)
   - `limit` (optional, default `10`, max `100`)
-- **Test with curl**
+  - `difficulty_level` (optional, filter by difficulty level)
+  - `min_duration` (optional, minimum program duration in days)
+  - `max_duration` (optional, maximum program duration in days)
+- **Sample Requests**
   ```bash
   curl -X GET "http://localhost:3000/programs?page=1&limit=10"
+  curl -X GET "http://localhost:3000/programs?page=1&limit=10&difficulty_level=Beginner&min_duration=0&max_duration=100"
   ```
 - **Response**
   ```json
@@ -107,10 +111,25 @@ Use Postman, Thunder Client, or `curl` examples below. All endpoints return JSON
 #### List workouts
 
 - **Method / Path**: `GET /workouts`
-- **Query params**: `page`, `limit` (same as programs)
-- **Test with curl**
+- **Query params**: 
+  - `page` (optional, default `1`)
+  - `limit` (optional, default `10`, max `100`)
+  - `difficulty` (optional, filter by difficulty level)
+  - `min_duration` (optional, minimum duration in minutes)
+  - `max_duration` (optional, maximum duration in minutes)
+- **Sample Requests**
   ```bash
   curl -X GET "http://localhost:3000/workouts?page=1&limit=10"
+  curl -X GET "http://localhost:3000/workouts?page=1&limit=10&difficulty=Beginner"
+  ```
+- **Response**
+  ```json
+  {
+    "data": [ { "_id": "...", "uid": "...", "title": "...", ... } ],
+    "total": 42,
+    "page": 1,
+    "limit": 10
+  }
   ```
 
 #### Get workout by identifier
@@ -180,11 +199,17 @@ Use Postman, Thunder Client, or `curl` examples below. All endpoints return JSON
 
 - **Method / Path**: `GET /diets`
 - **Query params**:
-  - `page`, `limit`
-  - `orgId` (optional filter)
-- **Test with curl**
+  - `page` (optional, default `1`)
+  - `limit` (optional, default `10`, max `100`)
+  - `orgId` (optional, filter by organization)
+  - `difficulty_level` (optional, filter by difficulty level)
+  - `min_calories` (optional, minimum calories per day)
+  - `max_calories` (optional, maximum calories per day)
+- **Sample Requests**
   ```bash
   curl -X GET "http://localhost:3000/diets?page=1&limit=10&orgId=org_123"
+  curl -X GET "http://localhost:3000/diets?page=1&limit=10&orgId=ciqRivramRd2urawUoSDDfRGwTa2&min_calories=1200&max_calories=3300"
+  curl -X GET "http://localhost:3000/diets?page=1&limit=10&difficulty_level=Beginner&min_calories=1200&max_calories=3200"
   ```
 
 #### List diets by organization path

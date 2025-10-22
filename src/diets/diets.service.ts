@@ -48,6 +48,22 @@ export class DietsService {
       filter.org_id = listDto.orgId;
     }
 
+    // Add difficulty level filter
+    if (listDto.difficulty_level) {
+      filter.difficulty_level = listDto.difficulty_level;
+    }
+
+    // Add calories filters
+    if (listDto.min_calories !== undefined || listDto.max_calories !== undefined) {
+      filter.calories_per_day = {};
+      if (listDto.min_calories !== undefined) {
+        filter.calories_per_day.$gte = listDto.min_calories;
+      }
+      if (listDto.max_calories !== undefined) {
+        filter.calories_per_day.$lte = listDto.max_calories;
+      }
+    }
+
     const [data, total] = await Promise.all([
       this.dietModel
         .find(filter)
