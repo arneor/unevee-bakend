@@ -46,6 +46,13 @@ export class DietsService {
     const filter: FilterQuery<DietDocument> = {};
     if (listDto.orgId) {
       filter.org_id = listDto.orgId;
+    } else {
+      // If no orgId is provided, only show public diets
+      filter.is_public = true;
+    }
+
+    if (listDto.branchId) {
+      filter.branch_id = listDto.branchId;
     }
 
     // Add difficulty level filter
@@ -54,14 +61,18 @@ export class DietsService {
     }
 
     // Add calories filters
-    if (listDto.min_calories !== undefined || listDto.max_calories !== undefined) {
-      filter.calories_per_day = {};
+    if (
+      listDto.min_calories !== undefined ||
+      listDto.max_calories !== undefined
+    ) {
+      const caloriesFilter: { $gte?: number; $lte?: number } = {};
       if (listDto.min_calories !== undefined) {
-        filter.calories_per_day.$gte = listDto.min_calories;
+        caloriesFilter.$gte = listDto.min_calories;
       }
       if (listDto.max_calories !== undefined) {
-        filter.calories_per_day.$lte = listDto.max_calories;
+        caloriesFilter.$lte = listDto.max_calories;
       }
+      filter.calories_per_day = caloriesFilter;
     }
 
     const [data, total] = await Promise.all([

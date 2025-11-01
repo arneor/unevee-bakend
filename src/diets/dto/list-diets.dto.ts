@@ -9,6 +9,10 @@ export class ListDietsDto extends PaginationQueryDto {
 
   @IsOptional()
   @IsString()
+  branchId?: string;
+
+  @IsOptional()
+  @IsString()
   difficulty_level?: string;
 
   @IsOptional()

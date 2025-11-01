@@ -77,8 +77,8 @@ class ProgramWorkout {
   @Prop()
   status?: string;
 
-  @Prop({ type: Boolean, default: false })
-  is_featured: boolean;
+  @Prop({ type: Boolean, default: true })
+  is_public: boolean;
 
   @Prop({ type: Number, default: 0 })
   order_in_day: number;
@@ -195,7 +195,7 @@ export class Program {
   status?: string;
 
   @Prop({ type: Boolean, default: false })
-  is_featured: boolean;
+  is_public: boolean;
 
   @Prop({ type: [String], default: [] })
   tags: string[];

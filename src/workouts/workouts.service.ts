@@ -32,7 +32,10 @@ export class WorkoutsService {
     }
 
     // Add duration filters
-    if (listDto.min_duration !== undefined || listDto.max_duration !== undefined) {
+    if (
+      listDto.min_duration !== undefined ||
+      listDto.max_duration !== undefined
+    ) {
       filter.duration_minutes = {};
       if (listDto.min_duration !== undefined) {
         filter.duration_minutes.$gte = listDto.min_duration;

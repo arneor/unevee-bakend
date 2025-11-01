@@ -80,7 +80,7 @@ export class CreateDietDto {
 
   @IsOptional()
   @IsString()
-  partner_id?: string;
+  branch_id?: string;
 
   @IsString()
   @IsNotEmpty()
@@ -125,17 +125,12 @@ export class CreateDietDto {
   meals?: DietDayDto[];
 
   @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  assigned_to?: string[];
-
-  @IsOptional()
   @IsString()
   status?: string;
 
   @IsOptional()
   @IsBoolean()
-  is_featured?: boolean;
+  is_public?: boolean;
 
   @IsOptional()
   @IsArray()

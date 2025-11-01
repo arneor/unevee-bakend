@@ -111,7 +111,7 @@ Use Postman, Thunder Client, or `curl` examples below. All endpoints return JSON
 #### List workouts
 
 - **Method / Path**: `GET /workouts`
-- **Query params**: 
+- **Query params**:
   - `page` (optional, default `1`)
   - `limit` (optional, default `10`, max `100`)
   - `difficulty` (optional, filter by difficulty level)
@@ -215,10 +215,14 @@ Use Postman, Thunder Client, or `curl` examples below. All endpoints return JSON
 #### List diets by organization path
 
 - **Method / Path**: `GET /organization/:orgId/diets`
-- **Query params**: `page`, `limit`
+- **Query params**:
+  - `page` (optional, default `1`)
+  - `limit` (optional, default `10`, max `100`)
+  - `branchId` (optional, filter by branch)
 - **Test with curl**
   ```bash
   curl -X GET "http://localhost:3000/organization/org_123/diets?page=1&limit=5"
+  curl -X GET "http://localhost:3000/organization/org_123/diets?page=1&limit=5&branchId=branch_456"
   ```
 
 #### Get diet by identifier
@@ -243,7 +247,7 @@ Use Postman, Thunder Client, or `curl` examples below. All endpoints return JSON
   ```bash
   curl -X PATCH "http://localhost:3000/diets/68f4e56c23c128edae452999" \
     -H "Content-Type: application/json" \
-    -d '{ "status": "published", "is_featured": true }'
+    -d '{ "status": "published", "is_public": true }'
   ```
 
 ---

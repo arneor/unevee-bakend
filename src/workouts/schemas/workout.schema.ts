@@ -146,8 +146,8 @@ export class Workout {
   @Prop()
   status?: string;
 
-  @Prop({ type: Boolean, default: false })
-  is_featured: boolean;
+  @Prop({ type: Boolean, default: true })
+  is_public: boolean;
 
   @Prop({ type: [String], default: [] })
   available_variants: string[];

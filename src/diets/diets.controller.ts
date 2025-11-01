@@ -8,7 +8,6 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
 import { CreateDietDto } from './dto/create-diet.dto';
 import { ListDietsDto } from './dto/list-diets.dto';
 import { UpdateDietDto } from './dto/update-diet.dto';
@@ -31,7 +30,7 @@ export class DietsController {
   @Get('organization/:orgId/diets')
   findByOrganization(
     @Param('orgId') orgId: string,
-    @Query() query: PaginationQueryDto,
+    @Query() query: ListDietsDto,
   ) {
     return this.dietsService.findAll({ ...query, orgId });
   }

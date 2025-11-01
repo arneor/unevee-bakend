@@ -87,7 +87,7 @@ export class Diet {
   org_id: string;
 
   @Prop()
-  partner_id?: string;
+  branch_id?: string;
 
   @Prop({ required: true })
   diet_id: string;
@@ -119,14 +119,11 @@ export class Diet {
   @Prop({ type: [DietDailyMealsSchema], default: [] })
   meals: DietDailyMeals[];
 
-  @Prop({ type: [String], default: [] })
-  assigned_to: string[];
-
   @Prop({ default: 'draft' })
   status: string;
 
-  @Prop({ type: Boolean, default: false })
-  is_featured: boolean;
+  @Prop({ type: Boolean, default: true })
+  is_public: boolean;
 
   @Prop({ type: [String], default: [] })
   tags: string[];
@@ -142,5 +139,6 @@ export type DietDocument = HydratedDocument<Diet>;
 
 export const DietSchema = SchemaFactory.createForClass(Diet);
 DietSchema.index({ org_id: 1 });
+DietSchema.index({ branch_id: 1 });
 DietSchema.index({ diet_id: 1 }, { unique: true });
 DietSchema.index({ slug: 1 }, { unique: true, sparse: true });

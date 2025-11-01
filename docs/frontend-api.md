@@ -156,7 +156,7 @@ This guide documents the public REST endpoints exposed by the NestJS backend. Sh
                 ],
                 "tags": ["Shoulders", "Core"],
                 "status": "published",
-                "is_featured": false,
+                "is_public": false,
                 "order_in_day": 1
               }
             ]
@@ -241,7 +241,7 @@ This guide documents the public REST endpoints exposed by the NestJS backend. Sh
                 ],
                 "tags": ["Back", "Strength", "Core"],
                 "status": "published",
-                "is_featured": false,
+                "is_public": false,
                 "order_in_day": 1
               }
             ]
@@ -326,7 +326,7 @@ This guide documents the public REST endpoints exposed by the NestJS backend. Sh
                 ],
                 "tags": ["Strength", "Core", "Chest"],
                 "status": "published",
-                "is_featured": false,
+                "is_public": false,
                 "order_in_day": 1
               },
               {
@@ -406,7 +406,7 @@ This guide documents the public REST endpoints exposed by the NestJS backend. Sh
                 ],
                 "tags": ["Shoulders", "Core"],
                 "status": "published",
-                "is_featured": false,
+                "is_public": false,
                 "order_in_day": 2
               }
             ]
@@ -416,7 +416,7 @@ This guide documents the public REST endpoints exposed by the NestJS backend. Sh
         "total_exercises": 20,
         "estimated_total_calories": 0,
         "status": "published",
-        "is_featured": true,
+        "is_public": true,
         "tags": ["Strength"],
         "stats": {
           "views": 0,
@@ -501,7 +501,7 @@ This guide documents the public REST endpoints exposed by the NestJS backend. Sh
         "secondary_muscles": ["Shoulders"],
         "tags": "Shoulders, Core",
         "status": "published",
-        "is_featured": false,
+        "is_public": false,
         "available_variants": ["male", "female"],
         "stats": {
           "views": 521,
@@ -595,7 +595,7 @@ This guide documents the public REST endpoints exposed by the NestJS backend. Sh
         "secondary_muscles": ["Shoulders", "Biceps"],
         "tags": "Strength, Core, Chest",
         "status": "published",
-        "is_featured": false,
+        "is_public": false,
         "available_variants": ["male", "female"],
         "stats": {
           "views": 0,
@@ -689,7 +689,7 @@ This guide documents the public REST endpoints exposed by the NestJS backend. Sh
         "secondary_muscles": ["Biceps"],
         "tags": "Strength, Biceps, Core",
         "status": "published",
-        "is_featured": false,
+        "is_public": false,
         "available_variants": ["male", "female"],
         "stats": {
           "views": 0,
@@ -783,7 +783,7 @@ This guide documents the public REST endpoints exposed by the NestJS backend. Sh
         "secondary_muscles": ["Hips", "Hamstrings"],
         "tags": "Back, Strength, Core",
         "status": "published",
-        "is_featured": false,
+        "is_public": false,
         "available_variants": ["male", "female"],
         "stats": {
           "views": 0,
@@ -877,7 +877,7 @@ This guide documents the public REST endpoints exposed by the NestJS backend. Sh
         "secondary_muscles": ["Abs", "Hips", "Lower Back", "Quadriceps"],
         "tags": "Abs, Core, Strength",
         "status": "published",
-        "is_featured": false,
+        "is_public": false,
         "available_variants": ["male", "female"],
         "stats": {
           "views": 1,
@@ -1001,7 +1001,7 @@ This guide documents the public REST endpoints exposed by the NestJS backend. Sh
   ```json
   {
     "org_id": "org_123",
-    "partner_id": "partner_456",
+    "branch_id": "partner_456",
     "title": "7-Day Keto Diet",
     "description": "Low-carb plan for fat loss.",
     "duration_days": 7,
@@ -1024,9 +1024,8 @@ This guide documents the public REST endpoints exposed by the NestJS backend. Sh
         ]
       }
     ],
-    "assigned_to": ["user_789"],
     "status": "draft",
-    "is_featured": false,
+    "is_public": false,
     "tags": ["keto", "weight loss"]
   }
   ```
@@ -1037,7 +1036,8 @@ This guide documents the public REST endpoints exposed by the NestJS backend. Sh
     "diet_id": "4a0b9c76-3f0f-4f27-bf18-7a6b4ad04f47",
     "slug": "7-day-keto-diet",
     "org_id": "org_123",
-    "partner_id": "partner_456",
+    "branch_id": "branch_456",
+    "branch_id": "partner_456",
     "title": "7-Day Keto Diet",
     "description": "Low-carb plan for fat loss.",
     "duration_days": 7,
@@ -1058,9 +1058,8 @@ This guide documents the public REST endpoints exposed by the NestJS backend. Sh
         ]
       }
     ],
-    "assigned_to": ["user_789"],
     "status": "draft",
-    "is_featured": false,
+    "is_public": false,
     "tags": ["keto", "weight loss"],
     "stats": {
       "views": 0,
@@ -1080,21 +1079,24 @@ This guide documents the public REST endpoints exposed by the NestJS backend. Sh
 
 ### GET `/diets`
 
-- **Description**: Paginated list of diets, optional org filter.
+- **Description**: Paginated list of diets. When no `orgId` is provided, only public diets (`is_public: true`) are returned. When `orgId` is provided, all diets for that organization are returned.
 - **Query Params**
   | Param | Type | Notes |
   |-------|------|-------|
   | `page` | number | pagination |
   | `limit` | number | pagination |
-  | `orgId` | string | filter by organization |
+  | `orgId` | string | filter by organization (if not provided, only public diets are returned) |
+  | `branchId` | string | filter by branch |
   | `difficulty_level` | string | filter by difficulty level |
   | `min_calories` | number | minimum calories per day |
   | `max_calories` | number | maximum calories per day |
 - **Sample Requests**
   ```
-  GET /diets?page=1&limit=10&orgId=org_123
+  GET /diets?page=1&limit=10 (returns only public diets)
+  GET /diets?page=1&limit=10&orgId=org_123 (returns all diets for organization)
+  GET /diets?page=1&limit=10&orgId=org_123&branchId=branch_456
   GET /diets?difficulty_level=Beginner&min_calories=1200&max_calories=2000
-  GET /diets?orgId=org_123&difficulty_level=Intermediate&min_calories=1500&max_calories=2500
+  GET /diets?orgId=org_123&branchId=branch_456&difficulty_level=Intermediate&min_calories=1500&max_calories=2500
   ```
 - **Response**
   ```json
@@ -1104,9 +1106,10 @@ This guide documents the public REST endpoints exposed by the NestJS backend. Sh
         "_id": "68f5aa5e23c128edae452920",
         "diet_id": "4a0b9c76-3f0f-4f27-bf18-7a6b4ad04f47",
         "org_id": "org_123",
+        "branch_id": "branch_456",
         "title": "7-Day Keto Diet",
         "status": "draft",
-        "is_featured": false,
+        "is_public": true,
         "tags": ["keto", "weight loss"],
         "macros": { "protein": 150, "carbs": 50, "fats": 120 },
         "meals": [ ... ],
@@ -1126,6 +1129,7 @@ This guide documents the public REST endpoints exposed by the NestJS backend. Sh
 - Same response as `/diets`, but `orgId` is taken from the path. Useful for org-scoped pages:
   ```
   GET /organization/org_123/diets?page=1&limit=6
+  GET /organization/org_123/diets?page=1&limit=6&branchId=branch_456
   ```
 
 ### GET `/diets/:identifier`
@@ -1151,7 +1155,7 @@ This guide documents the public REST endpoints exposed by the NestJS backend. Sh
   ```json
   {
     "status": "published",
-    "is_featured": true
+    "is_public": true
   }
   ```
 - Response: updated diet document.
